@@ -1,0 +1,33 @@
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+// Middleware to handle JSON data and serve frontend files
+app.use(express.json());
+app.use(express.static(__dirname));
+
+// In-memory database (simulating a real database for simplicity)
+let tasks = [
+    { id: 1, title: "Review Java DSA Arrays", status: "In Progress" },
+    { id: 2, title: "Design Portfolio Layout", status: "Completed" }
+];
+
+// 1. GET Route - Fetch all tasks
+app.get('/api/tasks', (req, res) => {
+    res.json(tasks);
+});
+
+// 2. POST Route - Add a new task
+app.post('/api/tasks', (req, res) => {
+    const newTask = {
+        id: tasks.length + 1,
+        title: req.body.title,
+        status: "Pending"
+    };
+    tasks.push(newTask);
+    res.status(201).json(newTask);
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running smoothly on port ${PORT}`);
+});
