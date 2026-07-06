@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Task Tracker</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 40px; color: #333; }
+        .container { max-width: 600px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { color: #4A5568; margin-bottom: 20px; }
+        input { width: 70%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        button { padding: 10px 20px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+        li { background: #edf2f7; padding: 12px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; }
+        .status { font-weight: bold; color: #2b6cb0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Project Task Manager</h2>
+    <input type="text" id="taskInput" placeholder="Enter a new project task...">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+    // Fetch tasks from Node.js backend when page loads
+    async function fetchTasks() {
+        const response = await fetch('/api/tasks');
+        const tasks = await response.json();
+        const list = document.getElementById('taskList');
+        list.innerHTML = '';
+        tasks.forEach(task => {
+            list.innerHTML += `<li>${task.title} <span class="status">[${task.status}]</span></li>`;
+        });
+    }
+
+    // Post a new task to the backend
+    async function addTask() {
+        const input = document.getElementById('taskInput');
+        if (!input.value) return;
+        
+        await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: input.value })
+        });
+        
+        input.value = '';
+        fetchTasks();
+    }
+
+    fetchTasks();
+</script>
+</body>
+</html>
